@@ -6,6 +6,10 @@ module Api
 
         private
 
+        def resource_params
+          params.require(:user).permit(:email, :password, :password_confirmation, :reset_password_token)
+        end
+
         def respond_with(resource, _opts = {})
           if resource.errors.empty?
             render json: { message: success_message }, status: :ok

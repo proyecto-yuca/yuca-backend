@@ -1,22 +1,20 @@
 Rails.application.routes.draw do
+  devise_for :users,
+             path: "api/v1/auth",
+             path_names: {
+               sign_in: "sign_in",
+               sign_out: "sign_out",
+               registration: ""
+             },
+             defaults: { format: :json },
+             controllers: {
+               sessions: "api/v1/auth/sessions",
+               registrations: "api/v1/auth/registrations",
+               passwords: "api/v1/auth/passwords"
+             }
+
   namespace :api do
     namespace :v1 do
-      devise_for :users, skip: %i[sessions registrations passwords], defaults: { format: :json }
-
-      devise_scope :user do
-        post "auth/sign_in", to: "auth/sessions#create"
-        delete "auth/sign_out", to: "auth/sessions#destroy"
-
-        post "auth", to: "auth/registrations#create"
-        patch "auth", to: "auth/registrations#update"
-        put "auth", to: "auth/registrations#update"
-        delete "auth", to: "auth/registrations#destroy"
-
-        post "auth/password", to: "auth/passwords#create"
-        patch "auth/password", to: "auth/passwords#update"
-        put "auth/password", to: "auth/passwords#update"
-      end
-
       resource :user, only: %i[show update destroy], controller: "users"
     end
   end
