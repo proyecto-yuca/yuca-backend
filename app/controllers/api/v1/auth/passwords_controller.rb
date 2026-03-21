@@ -11,10 +11,10 @@ module Api
         end
 
         def respond_with(resource, _opts = {})
-          if resource.errors.empty?
-            render json: { message: success_message }, status: :ok
-          else
+          if resource.respond_to?(:errors) && resource.errors.any?
             render json: { errors: resource.errors.full_messages }, status: :unprocessable_entity
+          else
+            render json: { message: success_message }, status: :ok
           end
         end
 
