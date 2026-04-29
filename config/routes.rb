@@ -16,6 +16,18 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resource :user, only: %i[show update destroy], controller: "users"
+
+      resources :fincas, only: %i[index show create update] do
+        member do
+          patch :estado
+        end
+
+        resources :lecturas, controller: "lecturas_sensor", only: %i[index create] do
+          collection do
+            get :recientes
+          end
+        end
+      end
     end
   end
 
