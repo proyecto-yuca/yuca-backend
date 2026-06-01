@@ -27,6 +27,14 @@ Rails.application.routes.draw do
             get :recientes
           end
         end
+
+        namespace :iot do
+          resource :credential, only: :create, controller: "credentials"
+        end
+      end
+
+      namespace :iot do
+        post "lecturas_sensor/sync", to: "lecturas_sync#create"
       end
     end
   end

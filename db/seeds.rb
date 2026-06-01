@@ -229,6 +229,9 @@ puts "   • #{Finca.count} fincas (#{Finca.where(estado: 'activo').count} activ
 puts "   • #{LecturaSensor.count} lecturas de sensores"
 puts "   • Alertas: #{LecturaSensor.where(estado: 'alerta').count} | Críticos: #{LecturaSensor.where(estado: 'critico').count} | Normales: #{LecturaSensor.where(estado: 'normal').count}"
 puts ""
+
+load Rails.root.join("db/seeds/iot_credentials.rb")
+
 puts "🔑 Credenciales:"
 puts "   andres.torres@yuca.com   /  password123  (6 fincas)"
 puts "   maria.restrepo@yuca.com  /  password123  (2 fincas)"

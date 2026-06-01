@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_29_000003) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_01_143000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_29_000003) do
     t.index ["municipio"], name: "index_fincas_on_municipio"
     t.index ["user_id", "estado"], name: "index_fincas_on_user_id_and_estado"
     t.index ["user_id"], name: "index_fincas_on_user_id"
+  end
+
+  create_table "iot_credentials", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.string "client_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "finca_id", null: false
+    t.datetime "last_synced_at"
+    t.string "secret_id_digest", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_iot_credentials_on_client_id", unique: true
+    t.index ["finca_id"], name: "index_iot_credentials_on_finca_id", unique: true
   end
 
   create_table "jwt_denylists", force: :cascade do |t|
@@ -80,5 +92,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_29_000003) do
   end
 
   add_foreign_key "fincas", "users"
+  add_foreign_key "iot_credentials", "fincas"
   add_foreign_key "lecturas_sensor", "fincas"
 end

@@ -3,6 +3,7 @@ class Finca < ApplicationRecord
 
   belongs_to :user
   has_many :lecturas_sensor, class_name: "LecturaSensor", dependent: :destroy
+  has_one :iot_credential, dependent: :destroy
 
   ESTADOS = %w[activo inactivo].freeze
   TIPOS_DOCUMENTO = %w[CC NIT CE PP].freeze
