@@ -1,5 +1,8 @@
 #!/bin/bash -e
 
+# Ensure gems are installed into the bundle_cache volume
+bundle install
+
 # If running the rails server then create or migrate existing database
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
   ./bin/rails db:prepare
