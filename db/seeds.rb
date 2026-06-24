@@ -1,7 +1,14 @@
 puts "🌱 Limpiando datos existentes..."
+Permiso.delete_all
+SensorVariable.delete_all
+Sensor.delete_all
 LecturaSensor.delete_all
+IotCredential.delete_all
+Cultivo.delete_all
 Finca.delete_all
 User.delete_all
+Modulo.delete_all
+Rol.delete_all
 
 # ─── Usuarios ────────────────────────────────────────────────────────────────
 
@@ -231,7 +238,10 @@ puts "   • Alertas: #{LecturaSensor.where(estado: 'alerta').count} | Críticos
 puts ""
 
 load Rails.root.join("db/seeds/iot_credentials.rb")
+load Rails.root.join("db/seeds/permisos.rb")
 
 puts "🔑 Credenciales:"
 puts "   andres.torres@yuca.com   /  password123  (6 fincas)"
 puts "   maria.restrepo@yuca.com  /  password123  (2 fincas)"
+puts ""
+puts "   • #{Rol.count} roles  |  #{Modulo.count} módulos  |  #{Permiso.count} permisos"

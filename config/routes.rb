@@ -15,9 +15,19 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resource :user, only: %i[show update destroy], controller: "users"
+      resource :user, only: %i[show update destroy], controller: "users" do
+        get :permisos, on: :member
+      end
 
       resources :variables, only: %i[index show create update destroy]
+
+      resources :modulos, only: %i[index]
+
+      resources :roles, only: %i[index show create update destroy] do
+        get   :permisos, to: "permisos#index"
+        put   :permisos, to: "permisos#update"
+        patch :permisos, to: "permisos#update"
+      end
 
       resources :fincas, only: %i[index show create update] do
         member do

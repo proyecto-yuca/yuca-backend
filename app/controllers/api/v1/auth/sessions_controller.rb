@@ -2,6 +2,8 @@ module Api
   module V1
     module Auth
       class SessionsController < Devise::SessionsController
+        include PermissionGuard
+
         respond_to :json
 
         # Devise's verify_signed_out_user uses warden.user(run_callbacks: false)
@@ -17,8 +19,9 @@ module Api
 
         def respond_with(resource, _opts = {})
           render json: {
-            user: UserBlueprint.render_as_hash(resource),
-            token: request.env["warden-jwt_auth.token"]
+            user:     UserBlueprint.render_as_hash(resource),
+            token:    request.env["warden-jwt_auth.token"],
+            permisos: permisos_del_usuario(resource)
           }, status: :ok
         end
 

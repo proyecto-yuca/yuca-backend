@@ -1,6 +1,10 @@
 module Api
   module V1
     class VariablesController < BaseController
+      before_action -> { require_permiso(:variables, :ver) },      only: [ :index, :show ]
+      before_action -> { require_permiso(:variables, :crear) },    only: [ :create ]
+      before_action -> { require_permiso(:variables, :editar) },   only: [ :update ]
+      before_action -> { require_permiso(:variables, :eliminar) }, only: [ :destroy ]
       before_action :set_variable, only: [ :show, :update, :destroy ]
 
       # GET /api/v1/variables

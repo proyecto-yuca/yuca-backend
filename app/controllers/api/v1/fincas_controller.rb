@@ -1,6 +1,9 @@
 module Api
   module V1
     class FincasController < BaseController
+      before_action -> { require_permiso(:fincas, :ver) },      only: [ :index, :show ]
+      before_action -> { require_permiso(:fincas, :crear) },    only: [ :create ]
+      before_action -> { require_permiso(:fincas, :editar) },   only: [ :update, :estado ]
       before_action :set_finca, only: [ :show, :update, :estado ]
 
       # GET /api/v1/fincas

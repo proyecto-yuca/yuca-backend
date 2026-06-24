@@ -1,6 +1,10 @@
 module Api
   module V1
     class SensoresController < BaseController
+      before_action -> { require_permiso(:sensores, :ver) },      only: [ :index, :show ]
+      before_action -> { require_permiso(:sensores, :crear) },    only: [ :create ]
+      before_action -> { require_permiso(:sensores, :editar) },   only: [ :update, :toggle ]
+      before_action -> { require_permiso(:sensores, :eliminar) }, only: [ :destroy ]
       before_action :set_finca
       before_action :set_sensor, only: [ :show, :update, :destroy, :toggle ]
 

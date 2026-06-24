@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_24_211532) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_24_214041) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -88,6 +88,39 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_24_211532) do
     t.index ["finca_id"], name: "index_lecturas_sensor_on_finca_id"
   end
 
+  create_table "modulos", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "identificador", null: false
+    t.string "nombre", null: false
+    t.integer "orden", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["identificador"], name: "index_modulos_on_identificador", unique: true
+  end
+
+  create_table "permisos", force: :cascade do |t|
+    t.boolean "crear", default: false, null: false
+    t.datetime "created_at", null: false
+    t.boolean "editar", default: false, null: false
+    t.boolean "eliminar", default: false, null: false
+    t.bigint "modulo_id", null: false
+    t.bigint "rol_id", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "ver", default: false, null: false
+    t.index ["modulo_id"], name: "index_permisos_on_modulo_id"
+    t.index ["rol_id", "modulo_id"], name: "index_permisos_on_rol_id_and_modulo_id", unique: true
+    t.index ["rol_id"], name: "index_permisos_on_rol_id"
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "descripcion"
+    t.string "identificador", null: false
+    t.string "nombre", null: false
+    t.boolean "sistema", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.index ["identificador"], name: "index_roles_on_identificador", unique: true
+  end
+
   create_table "sensor_variables", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "sensor_id", null: false
@@ -122,9 +155,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_24_211532) do
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
+    t.bigint "rol_id"
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["rol_id"], name: "index_users_on_rol_id"
   end
 
   create_table "variables", force: :cascade do |t|
@@ -141,8 +176,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_24_211532) do
   add_foreign_key "fincas", "users"
   add_foreign_key "iot_credentials", "fincas"
   add_foreign_key "lecturas_sensor", "fincas"
+  add_foreign_key "permisos", "modulos"
+  add_foreign_key "permisos", "roles", column: "rol_id"
   add_foreign_key "sensor_variables", "sensores", column: "sensor_id"
   add_foreign_key "sensor_variables", "variables"
   add_foreign_key "sensores", "cultivos"
   add_foreign_key "sensores", "fincas"
+  add_foreign_key "users", "roles", column: "rol_id"
 end

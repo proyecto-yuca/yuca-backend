@@ -1,6 +1,8 @@
 module Api
   module V1
     class LecturasSensorController < BaseController
+      before_action -> { require_permiso(:mediciones, :ver) },   only: [ :index, :recientes ]
+      before_action -> { require_permiso(:mediciones, :crear) }, only: [ :create ]
       before_action :set_finca
 
       # GET /api/v1/fincas/:finca_id/lecturas

@@ -21,6 +21,18 @@ module Api
         end
       end
 
+      def permisos
+        unless current_user.rol
+          render json: { error: "Usuario sin rol asignado" }, status: :forbidden
+          return
+        end
+
+        render json: {
+          rol:      { id: current_user.rol.id.to_s, identificador: current_user.rol.identificador, nombre: current_user.rol.nombre },
+          permisos: permisos_del_usuario(current_user)
+        }
+      end
+
       def destroy
         current_user.destroy!
         render json: { message: "User deleted successfully." }, status: :ok
