@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       resource :user, only: %i[show update destroy], controller: "users"
 
+      resources :variables, only: %i[index show create update destroy]
+
       resources :fincas, only: %i[index show create update] do
         member do
           patch :estado
