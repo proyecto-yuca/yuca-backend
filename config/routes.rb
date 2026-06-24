@@ -19,6 +19,12 @@ Rails.application.routes.draw do
         get :permisos, on: :member
       end
 
+      resources :usuarios, only: %i[index show create update destroy] do
+        member do
+          patch :cambiar_password
+        end
+      end
+
       resources :variables, only: %i[index show create update destroy]
 
       resources :modulos, only: %i[index]

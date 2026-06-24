@@ -7,7 +7,8 @@ modulos_data = [
   { identificador: "sensores",    nombre: "Sensores",    orden: 4 },
   { identificador: "variables",   nombre: "Variables",   orden: 5 },
   { identificador: "mediciones",  nombre: "Mediciones",  orden: 6 },
-  { identificador: "permisos",    nombre: "Permisos",    orden: 7 }
+  { identificador: "permisos",    nombre: "Permisos",    orden: 7 },
+  { identificador: "usuarios",    nombre: "Usuarios",    orden: 8 }
 ]
 
 modulos = modulos_data.map do |data|
@@ -56,8 +57,9 @@ sensores   = Modulo.find_by!(identificador: "sensores")
 variables  = Modulo.find_by!(identificador: "variables")
 mediciones = Modulo.find_by!(identificador: "mediciones")
 permisos_m = Modulo.find_by!(identificador: "permisos")
+usuarios_m = Modulo.find_by!(identificador: "usuarios")
 
-todos_los_modulos = [ inicio, fincas, cultivos, sensores, variables, mediciones, permisos_m ]
+todos_los_modulos = [ inicio, fincas, cultivos, sensores, variables, mediciones, permisos_m, usuarios_m ]
 
 # Admin: acceso total a todos los módulos
 todos_los_modulos.each do |modulo|
