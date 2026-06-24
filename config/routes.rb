@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       resources :usuarios, only: %i[index show create update destroy] do
         member do
           patch :cambiar_password
+          patch :toggle_estado
         end
       end
 

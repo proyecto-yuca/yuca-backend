@@ -153,6 +153,35 @@ curl -X PATCH "http://localhost:3000/api/v1/usuarios/3/cambiar_password" \
 
 ---
 
+### Activar / desactivar usuario
+
+No requiere body. Alterna entre `estado: true` y `estado: false`. No se puede cambiar el estado del propio usuario autenticado.
+
+```bash
+curl -X PATCH "http://localhost:3000/api/v1/usuarios/3/toggle_estado" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+**Respuesta `200 OK`:**
+```json
+{
+  "id": "3",
+  "name": "Juan Pérez",
+  "email": "juan.perez@yuca.com",
+  "estado": false,
+  "rol": { "id": "2", "identificador": "consultant", "nombre": "Consultor" },
+  "createdAt": "2026-06-24T23:07:46Z",
+  "updatedAt": "2026-06-24T23:10:00Z"
+}
+```
+
+**Respuesta `422`** al intentar cambiar el propio estado:
+```json
+{ "error": "No puedes cambiar el estado de tu propio usuario" }
+```
+
+---
+
 ### Eliminar usuario
 
 No es posible eliminar el propio usuario autenticado.

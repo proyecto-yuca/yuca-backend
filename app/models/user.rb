@@ -9,7 +9,14 @@ class User < ApplicationRecord
 
   has_many :fincas, dependent: :destroy
 
+  scope :activos,   -> { where(estado: true) }
+  scope :inactivos, -> { where(estado: false) }
+
   def admin?
     rol&.admin?
+  end
+
+  def toggle_estado!
+    update!(estado: !estado)
   end
 end

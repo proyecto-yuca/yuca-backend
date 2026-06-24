@@ -5,8 +5,8 @@ module Api
       before_action -> { require_permiso(:usuarios, :crear) },    only: [ :create ]
       before_action -> { require_permiso(:usuarios, :editar) },   only: [ :update ]
       before_action -> { require_permiso(:usuarios, :eliminar) }, only: [ :destroy ]
-      before_action -> { require_permiso(:usuarios, :editar) }, only: [ :cambiar_password ]
-      before_action :set_usuario, only: [ :show, :update, :destroy, :cambiar_password ]
+      before_action -> { require_permiso(:usuarios, :editar) }, only: [ :cambiar_password, :toggle_estado ]
+      before_action :set_usuario, only: [ :show, :update, :destroy, :cambiar_password, :toggle_estado ]
 
       # GET /api/v1/usuarios
       def index
@@ -66,6 +66,16 @@ module Api
         end
       end
 
+      # PATCH /api/v1/usuarios/:id/toggle_estado
+      def toggle_estado
+        if @usuario == current_user
+          render json: { error: "No puedes cambiar el estado de tu propio usuario" }, status: :unprocessable_entity
+          return
+        end
+        @usuario.toggle_estado!
+        render json: serialize_usuario(@usuario)
+      end
+
       # DELETE /api/v1/usuarios/:id
       def destroy
         if @usuario == current_user
@@ -97,6 +107,7 @@ module Api
           id:        usuario.id.to_s,
           name:      usuario.name,
           email:     usuario.email,
+          estado:    usuario.estado,
           rol:       usuario.rol ? { id: usuario.rol.id.to_s, identificador: usuario.rol.identificador, nombre: usuario.rol.nombre } : nil,
           createdAt: usuario.created_at.iso8601,
           updatedAt: usuario.updated_at.iso8601
