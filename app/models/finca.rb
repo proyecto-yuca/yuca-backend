@@ -2,6 +2,7 @@ class Finca < ApplicationRecord
   include PgSearch::Model
 
   belongs_to :user
+  has_many :cultivos, dependent: :destroy
   has_many :lecturas_sensor, class_name: "LecturaSensor", dependent: :destroy
   has_one :iot_credential, dependent: :destroy
 
