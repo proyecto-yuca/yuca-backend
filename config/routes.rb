@@ -26,6 +26,12 @@ Rails.application.routes.draw do
 
         resources :cultivos, only: %i[index show create update destroy]
 
+        resources :sensores, only: %i[index show create update destroy] do
+          member do
+            patch :toggle
+          end
+        end
+
         resources :lecturas, controller: "lecturas_sensor", only: %i[index create] do
           collection do
             get :recientes

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_24_204849) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_24_211532) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -88,6 +88,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_24_204849) do
     t.index ["finca_id"], name: "index_lecturas_sensor_on_finca_id"
   end
 
+  create_table "sensor_variables", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "sensor_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "variable_id", null: false
+    t.index ["sensor_id", "variable_id"], name: "index_sensor_variables_on_sensor_id_and_variable_id", unique: true
+    t.index ["sensor_id"], name: "index_sensor_variables_on_sensor_id"
+    t.index ["variable_id"], name: "index_sensor_variables_on_variable_id"
+  end
+
+  create_table "sensores", force: :cascade do |t|
+    t.boolean "activo", default: true, null: false
+    t.string "codigo", null: false
+    t.datetime "created_at", null: false
+    t.bigint "cultivo_id"
+    t.text "descripcion"
+    t.bigint "finca_id", null: false
+    t.decimal "lat", precision: 10, scale: 7
+    t.decimal "lng", precision: 10, scale: 7
+    t.string "nombre", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cultivo_id"], name: "index_sensores_on_cultivo_id"
+    t.index ["finca_id", "codigo"], name: "index_sensores_on_finca_id_and_codigo", unique: true
+    t.index ["finca_id"], name: "index_sensores_on_finca_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
@@ -115,4 +141,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_24_204849) do
   add_foreign_key "fincas", "users"
   add_foreign_key "iot_credentials", "fincas"
   add_foreign_key "lecturas_sensor", "fincas"
+  add_foreign_key "sensor_variables", "sensores", column: "sensor_id"
+  add_foreign_key "sensor_variables", "variables"
+  add_foreign_key "sensores", "cultivos"
+  add_foreign_key "sensores", "fincas"
 end
