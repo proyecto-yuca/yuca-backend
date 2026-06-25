@@ -243,5 +243,6 @@ load Rails.root.join("db/seeds/permisos.rb")
 puts "🔑 Credenciales:"
 puts "   andres.torres@yuca.com   /  password123  (6 fincas)"
 puts "   maria.restrepo@yuca.com  /  password123  (2 fincas)"
+# "owner@owner.com / password123"
 puts ""
 puts "   • #{Rol.count} roles  |  #{Modulo.count} módulos  |  #{Permiso.count} permisos"

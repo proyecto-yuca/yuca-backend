@@ -8,7 +8,7 @@ module Api
 
       # GET /api/v1/fincas
       def index
-        fincas = current_user.fincas
+        fincas = finca_scope
 
         fincas = fincas.buscar(params[:search]) if params[:search].present?
 
@@ -67,7 +67,7 @@ module Api
       private
 
       def set_finca
-        @finca = current_user.fincas.find(params[:id])
+        @finca = finca_scope.find(params[:id])
       rescue ActiveRecord::RecordNotFound
         render json: { error: "Finca no encontrada" }, status: :not_found
       end

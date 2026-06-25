@@ -27,7 +27,7 @@ module Api
         private
 
         def set_finca
-          @finca = current_user.fincas.find(params[:finca_id])
+          @finca = finca_scope.find(params[:finca_id])
         rescue ActiveRecord::RecordNotFound
           render json: { error: "Finca no encontrada" }, status: :not_found
         end
