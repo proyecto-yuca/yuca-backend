@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_24_232450) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_23_120001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -72,20 +72,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_24_232450) do
     t.index ["jti"], name: "index_jwt_denylists_on_jti", unique: true
   end
 
-  create_table "lecturas_sensor", force: :cascade do |t|
+  create_table "lecturas", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "estado", null: false
     t.date "fecha", null: false
-    t.bigint "finca_id", null: false
     t.string "hora_registro", null: false
-    t.decimal "humedad", precision: 5, scale: 1, null: false
-    t.string "sensor_id", null: false
-    t.decimal "temperatura", precision: 5, scale: 1, null: false
+    t.bigint "sensor_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["finca_id", "estado"], name: "index_lecturas_sensor_on_finca_id_and_estado"
-    t.index ["finca_id", "fecha", "hora_registro"], name: "index_lecturas_sensor_on_finca_id_and_fecha_and_hora_registro", unique: true
-    t.index ["finca_id", "fecha"], name: "index_lecturas_sensor_on_finca_id_and_fecha"
-    t.index ["finca_id"], name: "index_lecturas_sensor_on_finca_id"
+    t.decimal "valor", precision: 8, scale: 2, null: false
+    t.bigint "variable_id", null: false
+    t.index ["sensor_id", "fecha"], name: "index_lecturas_on_sensor_id_and_fecha"
+    t.index ["sensor_id", "variable_id", "fecha", "hora_registro"], name: "index_lecturas_unicidad", unique: true
+    t.index ["sensor_id"], name: "index_lecturas_on_sensor_id"
+    t.index ["variable_id"], name: "index_lecturas_on_variable_id"
   end
 
   create_table "modulos", force: :cascade do |t|
@@ -177,7 +175,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_24_232450) do
   add_foreign_key "cultivos", "fincas"
   add_foreign_key "fincas", "users"
   add_foreign_key "iot_credentials", "fincas"
-  add_foreign_key "lecturas_sensor", "fincas"
+  add_foreign_key "lecturas", "sensores", column: "sensor_id"
+  add_foreign_key "lecturas", "variables"
   add_foreign_key "permisos", "modulos"
   add_foreign_key "permisos", "roles", column: "rol_id"
   add_foreign_key "sensor_variables", "sensores", column: "sensor_id"

@@ -20,8 +20,18 @@ module Api
           errors = []
 
           records.each do |idx, attrs|
-            lectura = @finca.lecturas_sensor.find_or_initialize_by(
-              fecha: attrs[:fecha],
+            sensor   = @finca.sensores.find_by(codigo: attrs[:sensor_codigo])
+            variable = Variable.find_by(nombre: attrs[:variable_nombre])
+
+            if sensor.nil? || variable.nil?
+              resultado[:failed] += 1
+              errors << { index: idx, messages: [ sensor.nil? ? "sensor_codigo desconocido" : "variable_nombre desconocido" ] }
+              next
+            end
+
+            lectura = sensor.lecturas.find_or_initialize_by(
+              variable:      variable,
+              fecha:         attrs[:fecha],
               hora_registro: attrs[:hora_registro]
             )
 
@@ -30,7 +40,7 @@ module Api
               next
             end
 
-            lectura.assign_attributes(attrs)
+            lectura.valor = attrs[:valor]
 
             if lectura.save
               resultado[:created] += 1
@@ -61,7 +71,7 @@ module Api
           end
 
           lectura_params.permit(
-            :sensor_id, :fecha, :hora_registro, :humedad, :temperatura
+            :sensor_codigo, :variable_nombre, :fecha, :hora_registro, :valor
           ).to_h.symbolize_keys
         end
       end

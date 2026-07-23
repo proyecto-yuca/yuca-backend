@@ -47,12 +47,8 @@ Rails.application.routes.draw do
           member do
             patch :toggle
           end
-        end
 
-        resources :lecturas, controller: "lecturas_sensor", only: %i[index create] do
-          collection do
-            get :recientes
-          end
+          resources :lecturas, only: %i[index create]
         end
 
         namespace :iot do
