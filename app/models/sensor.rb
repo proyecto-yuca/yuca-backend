@@ -5,6 +5,7 @@ class Sensor < ApplicationRecord
   belongs_to :cultivo, optional: true
   has_many :sensor_variables, dependent: :destroy
   has_many :variables, through: :sensor_variables
+  has_many :lecturas, dependent: :destroy
 
   validates :codigo, presence: true, length: { maximum: 100 },
             uniqueness: { scope: :finca_id, case_sensitive: false }

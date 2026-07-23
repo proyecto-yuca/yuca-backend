@@ -1,8 +1,8 @@
 puts "🌱 Limpiando datos existentes..."
 Permiso.delete_all
 SensorVariable.delete_all
+Lectura.delete_all
 Sensor.delete_all
-LecturaSensor.delete_all
 IotCredential.delete_all
 Cultivo.delete_all
 Finca.delete_all
@@ -189,52 +189,16 @@ fincas_data = [
 fincas = fincas_data.map { |data| Finca.create!(data) }
 puts "   ✓ #{fincas.size} fincas creadas"
 
-# ─── Lecturas de Sensores ────────────────────────────────────────────────────
-
-puts "📡 Creando lecturas de sensores..."
-
-sensores     = %w[SHT-3x-A DHT-22 BME280 SHT-31B]
-horas_dia    = %w[06:00 12:00 18:00 23:00]
-total_lecturas = 0
-
-fincas.each do |finca|
-  sensor_id = sensores.sample
-
-  # Lecturas de los últimos 30 días
-  (0..29).each do |dias_atras|
-    fecha = Date.today - dias_atras
-
-    horas_dia.each_with_index do |hora, idx|
-      # Simular valores realistas según la hora del día
-      base_humedad     = 60 + rand(-15..20).to_f + (idx * 2)
-      base_temperatura = 22 + rand(-5..10).to_f - (idx == 0 ? 3 : 0)
-
-      humedad     = base_humedad.clamp(25.0, 98.0).round(1)
-      temperatura = base_temperatura.clamp(8.0, 40.0).round(1)
-
-      next if LecturaSensor.exists?(finca_id: finca.id, fecha: fecha, hora_registro: hora)
-
-      LecturaSensor.create!(
-        finca:         finca,
-        sensor_id:     sensor_id,
-        fecha:         fecha,
-        hora_registro: hora,
-        humedad:       humedad,
-        temperatura:   temperatura
-      )
-      total_lecturas += 1
-    end
-  end
-end
-
-puts "   ✓ #{total_lecturas} lecturas creadas"
+load Rails.root.join("db/seeds/lecturas_el_porvenir.rb")
 
 puts ""
 puts "✅ Seeds completados:"
 puts "   • #{User.count} usuarios"
 puts "   • #{Finca.count} fincas (#{Finca.where(estado: 'activo').count} activas, #{Finca.where(estado: 'inactivo').count} inactivas)"
-puts "   • #{LecturaSensor.count} lecturas de sensores"
-puts "   • Alertas: #{LecturaSensor.where(estado: 'alerta').count} | Críticos: #{LecturaSensor.where(estado: 'critico').count} | Normales: #{LecturaSensor.where(estado: 'normal').count}"
+puts "   • #{Cultivo.count} cultivos"
+puts "   • #{Sensor.count} sensores"
+puts "   • #{Variable.count} variables"
+puts "   • #{Lectura.count} lecturas"
 puts ""
 
 load Rails.root.join("db/seeds/iot_credentials.rb")

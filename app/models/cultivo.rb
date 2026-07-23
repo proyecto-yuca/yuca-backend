@@ -1,6 +1,7 @@
 class Cultivo < ApplicationRecord
   belongs_to :finca
   has_many :sensores, class_name: "Sensor", dependent: :nullify
+  has_many :lecturas, through: :sensores
 
   validates :nombre, presence: true, length: { maximum: 255 }
   validate :puntos_ubicacion_validos
