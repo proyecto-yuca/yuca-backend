@@ -4,6 +4,16 @@ puts "🌾 Creando cultivos, sensores y lecturas para Agrícola El Porvenir..."
 
 finca = Finca.find_by!(nombre: "Agrícola El Porvenir")
 
+# Área de la finca: debe encerrar los puntos de todos sus cultivos.
+if finca.puntos_ubicacion.blank?
+  finca.update!(puntos_ubicacion: [
+    { "lat" => "3.5430", "lng" => "-76.3065" },
+    { "lat" => "3.5430", "lng" => "-76.3010" },
+    { "lat" => "3.5345", "lng" => "-76.3010" },
+    { "lat" => "3.5345", "lng" => "-76.3065" }
+  ])
+end
+
 # ─── Variables ────────────────────────────────────────────────────────────────
 
 humedad = Variable.find_or_create_by!(nombre: "Humedad") do |v|

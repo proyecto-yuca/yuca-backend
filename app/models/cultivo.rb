@@ -1,32 +1,22 @@
 class Cultivo < ApplicationRecord
+  include PuntosUbicacion
+
   belongs_to :finca
   has_many :sensores, class_name: "Sensor", dependent: :nullify
   has_many :lecturas, through: :sensores
 
   validates :nombre, presence: true, length: { maximum: 255 }
-  validate :puntos_ubicacion_validos
+  validate :dentro_de_la_finca
 
   private
 
-  def puntos_ubicacion_validos
-    puntos = puntos_ubicacion || []
+  def dentro_de_la_finca
+    return if finca.nil? || finca.poligono.empty?
+    return unless puntos_ubicacion_con_formato_valido?
 
-    unless puntos.is_a?(Array)
-      errors.add(:puntos_ubicacion, "debe ser un arreglo")
-      return
-    end
-
-    if puntos.size > 4
-      errors.add(:puntos_ubicacion, "no puede tener más de 4 puntos")
-      return
-    end
-
-    puntos.each_with_index do |punto, i|
-      unless punto.is_a?(Hash) &&
-             punto["lat"].present? && punto["lng"].present? &&
-             punto["lat"].to_s.match?(/\A-?\d+(\.\d+)?\z/) &&
-             punto["lng"].to_s.match?(/\A-?\d+(\.\d+)?\z/)
-        errors.add(:puntos_ubicacion, "punto #{i + 1} debe tener lat y lng numéricos")
+    puntos_ubicacion.each_with_index do |punto, i|
+      unless finca.contiene_punto?(punto["lat"], punto["lng"])
+        errors.add(:puntos_ubicacion, "punto #{i + 1} está fuera del área de la finca")
       end
     end
   end

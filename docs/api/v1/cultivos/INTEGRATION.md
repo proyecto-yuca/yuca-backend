@@ -176,6 +176,16 @@ curl -X POST "http://localhost:3000/api/v1/fincas/$FINCA_ID/cultivos" \
 }
 ```
 
+**Respuesta `422 Unprocessable Entity`** (punto fuera del área de la finca, cuando la finca tiene 3 o más `puntosUbicacion`):
+
+```json
+{
+  "errors": {
+    "puntos_ubicacion": ["punto 3 está fuera del área de la finca"]
+  }
+}
+```
+
 ---
 
 ## 4. Actualizar cultivo
@@ -262,6 +272,7 @@ curl -X DELETE "http://localhost:3000/api/v1/fincas/$FINCA_ID/cultivos/1" \
 | Tema | Detalle |
 |------|---------|
 | **Puntos de ubicación** | Se envían como `puntos_ubicacion` (snake_case) y se devuelven como `puntosUbicacion` (camelCase). Máximo 4 puntos. |
+| **Dentro de la finca** | Si la finca tiene 3 o más `puntosUbicacion`, cada punto del cultivo debe quedar dentro de ese polígono. Si la finca no tiene área definida, no se valida. |
 | **Reemplazo completo** | Al enviar `puntos_ubicacion` en un PATCH, se reemplazan **todos** los puntos existentes. Para eliminarlos enviar `[]`. |
 | **Aislamiento por usuario** | El acceso a una finca valida que pertenezca al usuario autenticado. No es posible acceder a cultivos de fincas de otro usuario. |
 | **Coordenadas** | `lat` y `lng` se aceptan como número o string numérico y siempre se devuelven como `float`. |

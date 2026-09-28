@@ -75,6 +75,7 @@ module Api
       def finca_params
         params.require(:finca).permit(
           :nombre, :descripcion, :area,
+          puntos_ubicacion: [ :lat, :lng ],
           ubicacion: [ :departamento, :municipio, :vereda, :coordenadas, :direccion ],
           dueno:     [ :nombre, :tipoDocumento, :numeroDocumento, :email, :telefono, :direccion ]
         ).then { |p| flatten_nested_params(p) }
@@ -116,6 +117,9 @@ module Api
             coordenadas:  finca.coordenadas,
             direccion:    finca.direccion_ubicacion
           },
+          puntosUbicacion: (finca.puntos_ubicacion || []).map do |p|
+            { lat: p["lat"].to_f, lng: p["lng"].to_f }
+          end,
           dueno: {
             nombre:          finca.dueno_nombre,
             tipoDocumento:   finca.dueno_tipo_documento,

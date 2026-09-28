@@ -107,6 +107,12 @@ curl -X GET "http://localhost:3000/api/v1/fincas?search=Carlos&estado=activo&pag
         "coordenadas": "4.3372° N, 74.3641° W",
         "direccion": "Vereda El Jordán, km 3 vía Silvania"
       },
+      "puntosUbicacion": [
+        { "lat": 4.3390, "lng": -74.3670 },
+        { "lat": 4.3390, "lng": -74.3610 },
+        { "lat": 4.3350, "lng": -74.3610 },
+        { "lat": 4.3350, "lng": -74.3670 }
+      ],
       "dueno": {
         "nombre": "Carlos Alberto Ramírez",
         "tipoDocumento": "CC",
@@ -146,6 +152,12 @@ curl -X POST "http://localhost:3000/api/v1/fincas" \
         "coordenadas": "7.1193° N, 73.1227° W",
         "direccion": "Vereda La Cumbre, km 6 vía Floridablanca"
       },
+      "puntos_ubicacion": [
+        { "lat": 7.1210, "lng": -73.1250 },
+        { "lat": 7.1210, "lng": -73.1200 },
+        { "lat": 7.1175, "lng": -73.1200 },
+        { "lat": 7.1175, "lng": -73.1250 }
+      ],
       "dueno": {
         "nombre": "Adriana Milena Castro",
         "tipoDocumento": "CC",
@@ -173,6 +185,12 @@ curl -X POST "http://localhost:3000/api/v1/fincas" \
     "coordenadas": "7.1193° N, 73.1227° W",
     "direccion": "Vereda La Cumbre, km 6 vía Floridablanca"
   },
+  "puntosUbicacion": [
+    { "lat": 7.121, "lng": -73.125 },
+    { "lat": 7.121, "lng": -73.12 },
+    { "lat": 7.1175, "lng": -73.12 },
+    { "lat": 7.1175, "lng": -73.125 }
+  ],
   "dueno": {
     "nombre": "Adriana Milena Castro",
     "tipoDocumento": "CC",
@@ -194,6 +212,18 @@ curl -X POST "http://localhost:3000/api/v1/fincas" \
     "nombre": ["no puede estar en blanco"],
     "area": ["debe ser mayor que 0"],
     "dueno_email": ["no tiene un formato válido"]
+  }
+}
+```
+
+**Puntos del área (`puntos_ubicacion`)** — opcional. Hasta 4 vértices `{lat, lng}` que delimitan la finca en el mapa. Si la finca tiene 3 o más puntos, los puntos de sus cultivos deben quedar **dentro** de ese polígono.
+
+**Respuesta `422 Unprocessable Entity`** (puntos del área inválidos):
+
+```json
+{
+  "errors": {
+    "puntos_ubicacion": ["no puede tener más de 4 puntos"]
   }
 }
 ```
@@ -250,6 +280,35 @@ curl -X PATCH "http://localhost:3000/api/v1/fincas/1" \
 ```
 
 **Respuesta `200 OK`:** objeto `Finca` con los datos actualizados.
+
+**Actualizar solo el área de la finca:**
+
+```bash
+curl -X PATCH "http://localhost:3000/api/v1/fincas/1" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "finca": {
+      "puntos_ubicacion": [
+        { "lat": 4.3390, "lng": -74.3670 },
+        { "lat": 4.3390, "lng": -74.3610 },
+        { "lat": 4.3350, "lng": -74.3610 },
+        { "lat": 4.3350, "lng": -74.3670 }
+      ]
+    }
+  }'
+```
+
+**Respuesta `422 Unprocessable Entity`** (el nuevo polígono deja un cultivo fuera):
+
+```json
+{
+  "errors": {
+    "puntos_ubicacion": ["el cultivo Lote Norte quedaría fuera del área de la finca"]
+  }
+}
+```
+
 
 ---
 
@@ -503,4 +562,5 @@ El estado se calcula automáticamente en el servidor al guardar cada lectura:
 | **Aislamiento por usuario** | Todas las consultas se filtran por `current_user`. No es posible acceder a fincas de otro usuario aunque se conozca el `id`. |
 | **Resumen histórico** | El campo `resumen` en `/lecturas` siempre refleja el **total histórico** de la finca, independientemente de los filtros de fecha/estado aplicados al listado. |
 | **Unicidad de lecturas** | No se pueden registrar dos lecturas con la misma `fecha` + `horaRegistro` para la misma finca. |
+| **Área de la finca** | `puntos_ubicacion` se envía en snake_case y se devuelve como `puntosUbicacion`. Máximo 4 puntos; al enviarlo se reemplazan todos (`[]` para limpiar). Con 3 o más puntos, los cultivos deben quedar dentro. |
 | **Paginación** | Default: `page=1`, `page_size=6` (fincas) y `page_size=10` (lecturas). Máximo `page_size=100`. |

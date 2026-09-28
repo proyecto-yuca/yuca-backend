@@ -1,5 +1,6 @@
 class Finca < ApplicationRecord
   include PgSearch::Model
+  include PuntosUbicacion
 
   belongs_to :user
   has_many :cultivos, dependent: :destroy
@@ -29,6 +30,7 @@ class Finca < ApplicationRecord
             :dueno_email, :dueno_telefono, presence: true
   validates :dueno_tipo_documento, inclusion: { in: TIPOS_DOCUMENTO }
   validates :dueno_email, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validate :cultivos_dentro_del_poligono, if: :puntos_ubicacion_changed?
 
   before_create :set_fecha_registro
 
@@ -45,6 +47,16 @@ class Finca < ApplicationRecord
   end
 
   private
+
+  def cultivos_dentro_del_poligono
+    return if new_record? || poligono.empty?
+    return unless puntos_ubicacion_con_formato_valido?
+
+    cultivos.each do |cultivo|
+      fuera = (cultivo.puntos_ubicacion || []).any? { |p| !contiene_punto?(p["lat"], p["lng"]) }
+      errors.add(:puntos_ubicacion, "el cultivo #{cultivo.nombre} quedaría fuera del área de la finca") if fuera
+    end
+  end
 
   def set_fecha_registro
     self.fecha_registro ||= Date.today

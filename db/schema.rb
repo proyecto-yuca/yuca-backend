@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_23_120001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_28_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -41,6 +41,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_120001) do
     t.date "fecha_registro", null: false
     t.string "municipio", null: false
     t.string "nombre", null: false
+    t.jsonb "puntos_ubicacion", default: [], null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.string "vereda"
@@ -175,11 +176,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_23_120001) do
   add_foreign_key "cultivos", "fincas"
   add_foreign_key "fincas", "users"
   add_foreign_key "iot_credentials", "fincas"
-  add_foreign_key "lecturas", "sensores", column: "sensor_id"
+  add_foreign_key "lecturas", "sensores"
   add_foreign_key "lecturas", "variables"
   add_foreign_key "permisos", "modulos"
   add_foreign_key "permisos", "roles", column: "rol_id"
-  add_foreign_key "sensor_variables", "sensores", column: "sensor_id"
+  add_foreign_key "sensor_variables", "sensores"
   add_foreign_key "sensor_variables", "variables"
   add_foreign_key "sensores", "cultivos"
   add_foreign_key "sensores", "fincas"
