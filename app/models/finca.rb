@@ -6,6 +6,7 @@ class Finca < ApplicationRecord
   has_many :cultivos, dependent: :destroy
   has_many :sensores, class_name: "Sensor", dependent: :destroy
   has_many :lecturas, through: :sensores
+  has_many :alertas, dependent: :delete_all
   has_one :iot_credential, dependent: :destroy
 
   ESTADOS = %w[activo inactivo].freeze

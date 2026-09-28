@@ -8,8 +8,9 @@ module Api
 
       # GET /api/v1/fincas/:finca_id/sensores/:sensor_id/lecturas
       def index
-        lecturas = @sensor.lecturas.includes(:sensor, :variable).cronologico_desc
+        lecturas = @sensor.lecturas.includes(variable: :eventos).cronologico_desc
         lecturas = lecturas.por_variable(params[:variable_id])
+        lecturas = lecturas.fuera_de_rango if params[:estado] == "fuera"
 
         if params[:fecha_desde].present? && params[:fecha_hasta].present?
           lecturas = lecturas.en_rango(params[:fecha_desde], params[:fecha_hasta])
@@ -66,7 +67,23 @@ module Api
           valor:        lectura.valor.to_f,
           sensor:       { id: @sensor.id.to_s, codigo: @sensor.codigo, nombre: @sensor.nombre },
           cultivo:      @sensor.cultivo ? { id: @sensor.cultivo.id.to_s, nombre: @sensor.cultivo.nombre } : nil,
-          variable:     { id: lectura.variable_id.to_s, nombre: lectura.variable.nombre, unidad: lectura.variable.unidad }
+          variable:     serialize_variable_ref(lectura.variable),
+          estado:       lectura.variable.estado_para(lectura.valor),
+          eventos:      lectura.variable.eventos_disparados(lectura.valor).map do |evento, tipo|
+            { id: evento.id.to_s, nombre: evento.nombre, severidad: evento.severidad, tipo: tipo }
+          end
+        }
+      end
+
+      # Incluye los rangos activos para que el frontend dibuje las bandas del gráfico.
+      def serialize_variable_ref(variable)
+        {
+          id:      variable.id.to_s,
+          nombre:  variable.nombre,
+          unidad:  variable.unidad,
+          rangos:  variable.eventos.select(&:activo?).map do |e|
+            { eventoId: e.id.to_s, nombre: e.nombre, severidad: e.severidad, min: e.rango_min&.to_f, max: e.rango_max&.to_f }
+          end
         }
       end
     end

@@ -64,3 +64,8 @@ group :development, :test do
   # Load environment variables from .env file
   gem "dotenv-rails"
 end
+
+group :development do
+  # Preview outgoing emails in the browser at /letter_opener
+  gem "letter_opener_web"
+end

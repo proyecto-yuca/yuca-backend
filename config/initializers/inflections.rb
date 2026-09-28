@@ -17,4 +17,5 @@
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular "sensor", "sensores"
+  inflect.irregular "alerta", "alertas"
 end

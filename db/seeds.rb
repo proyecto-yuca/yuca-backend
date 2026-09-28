@@ -1,6 +1,8 @@
 puts "🌱 Limpiando datos existentes..."
 Permiso.delete_all
 SensorVariable.delete_all
+Alerta.delete_all
+VariableEvento.delete_all
 Lectura.delete_all
 Sensor.delete_all
 IotCredential.delete_all

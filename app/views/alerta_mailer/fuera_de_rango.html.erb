@@ -1,0 +1,254 @@
+<%# Diseño de referencia: docs/emails/alerta_fuera_de_rango.html %>
+<% t = severidad_tokens(@alerta.severidad) %>
+<% valor = valor_con_unidad(@alerta.valor, @variable) %>
+<% fuente = "Segoe UI, Helvetica, Arial, sans-serif" %>
+<!DOCTYPE html>
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <title><%= message.subject %></title>
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
+  <style>
+    body { margin: 0; padding: 0; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    table { border-collapse: separate; mso-table-lspace: 0; mso-table-rspace: 0; }
+    img { border: 0; line-height: 100%; outline: none; text-decoration: none; }
+    a { text-decoration: none; }
+
+    @media (max-width: 620px) {
+      .container { width: 100% !important; }
+      .px { padding-left: 20px !important; padding-right: 20px !important; }
+      .value { font-size: 44px !important; }
+      .stack { display: block !important; width: 100% !important; }
+      .stack-gap { padding-top: 12px !important; text-align: left !important; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .bg-page   { background-color: #0f1a10 !important; }
+      .bg-card   { background-color: #16241a !important; }
+      .bg-soft   { background-color: #1d2e21 !important; }
+      .border    { border-color: #2b4030 !important; }
+      .text-main { color: #eef5ee !important; }
+      .text-sub  { color: #b7c8b8 !important; }
+      .text-mute { color: #8aa08c !important; }
+<% if @alerta.severidad == "critico" %>
+      .sev-soft  { background-color: #3b1511 !important; border-color: #7a271a !important; }
+      .sev-chip  { background-color: #2a0f0c !important; border-color: #7a271a !important; }
+      .sev-text  { color: #fda29b !important; }
+      .sev-deep  { color: #fecdca !important; }
+<% else %>
+      .sev-soft  { background-color: #3a2406 !important; border-color: #7a4a0a !important; }
+      .sev-chip  { background-color: #2a1a04 !important; border-color: #7a4a0a !important; }
+      .sev-text  { color: #fdb022 !important; }
+      .sev-deep  { color: #fedf89 !important; }
+<% end %>
+    }
+  </style>
+</head>
+<body class="bg-page" style="margin:0; padding:0; background-color:#f4f1ec;">
+
+  <div style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#f4f1ec; opacity:0;">
+    <%= @variable.nombre %> <%= valor %> en <%= @cultivo&.nombre || @sensor.nombre %>, <%= descripcion_tipo(@alerta) %> (<%= rango_texto(@alerta) %>). Sensor <%= @sensor.codigo %> · <%= fecha_hora_corta(@lectura) %>.
+    &#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;&#8199;&#65279;&#847;
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="bg-page" style="background-color:#f4f1ec;">
+    <tr>
+      <td align="center" style="padding:32px 12px;">
+
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" class="container" style="width:600px; max-width:600px;">
+
+          <!-- Marca -->
+          <tr>
+            <td class="px" style="padding:0 32px 16px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="font-family:<%= fuente %>;">
+                    <table role="presentation" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="32" height="32" align="center" valign="middle" style="width:32px; height:32px; background-color:#2E632B; border-radius:8px; font-size:17px; line-height:32px; color:#ffffff;">&#127793;</td>
+                        <td class="text-main" style="padding-left:10px; font-size:18px; font-weight:700; color:#1a3a18; letter-spacing:-0.2px;">Yuca</td>
+                        <td class="text-mute" style="padding-left:8px; font-size:13px; color:#8c7354;">Monitoreo agrícola</td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td align="right" class="text-mute" style="font-family:<%= fuente %>; font-size:12px; color:#8c7354;">
+                    <%= fecha_hora_corta(@lectura) %>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Tarjeta principal -->
+          <tr>
+            <td>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="bg-card border" style="background-color:#ffffff; border:1px solid #e7dfd3; border-radius:16px; overflow:hidden;">
+
+                <tr>
+                  <td height="6" style="height:6px; line-height:6px; font-size:6px; background-color:<%= t[:acento] %>;">&nbsp;</td>
+                </tr>
+
+                <!-- Encabezado -->
+                <tr>
+                  <td class="px" style="padding:28px 32px 8px 32px; font-family:<%= fuente %>;">
+                    <table role="presentation" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td class="sev-soft sev-text" style="background-color:<%= t[:fondo] %>; border:1px solid <%= t[:borde] %>; border-radius:999px; padding:4px 12px; font-size:11px; font-weight:700; letter-spacing:1.2px; color:<%= t[:acento] %>;">
+                          &#9679;&nbsp; <%= t[:etiqueta] %>
+                        </td>
+                      </tr>
+                    </table>
+                    <h1 class="text-main" style="margin:16px 0 6px 0; font-size:24px; line-height:1.3; font-weight:700; color:#0f2210;">
+                      <%= @evento.nombre %> en <%= @cultivo&.nombre || @finca.nombre %>
+                    </h1>
+                    <p class="text-sub" style="margin:0; font-size:15px; line-height:1.6; color:#564430;">
+                      El sensor <strong><%= @sensor.codigo %></strong> registró una lectura <%= descripcion_tipo(@alerta) %> permitido en <strong><%= @finca.nombre %></strong>.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Valor destacado -->
+                <tr>
+                  <td class="px" style="padding:20px 32px 8px 32px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="sev-soft" style="background-color:<%= t[:fondo] %>; border:1px solid <%= t[:borde] %>; border-radius:12px;">
+                      <tr>
+                        <td style="padding:20px 24px; font-family:<%= fuente %>;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                              <td class="stack" valign="middle">
+                                <div class="sev-text" style="font-size:12px; font-weight:600; letter-spacing:0.8px; text-transform:uppercase; color:<%= t[:acento] %>;"><%= @variable.nombre %> registrada</div>
+                                <div class="value sev-text" style="font-size:52px; line-height:1.1; font-weight:800; color:<%= t[:acento] %>; letter-spacing:-1.5px;">
+                                  <%= numero(@alerta.valor, @variable) %><span style="font-size:24px; font-weight:700; letter-spacing:0;">&nbsp;<%= @variable.unidad %></span>
+                                </div>
+                              </td>
+                              <td class="stack stack-gap" valign="middle" align="right">
+                                <table role="presentation" cellpadding="0" cellspacing="0">
+                                  <tr>
+                                    <td class="sev-chip" style="background-color:#ffffff; border:1px solid <%= t[:borde] %>; border-radius:10px; padding:10px 14px; font-family:<%= fuente %>;">
+                                      <div class="sev-deep" style="font-size:12px; color:<%= t[:profundo] %>;"><%= @alerta.tipo == "alto" ? "&#9650;".html_safe : "&#9660;".html_safe %> <%= descripcion_tipo(@alerta).capitalize %></div>
+                                      <div class="sev-text" style="font-size:18px; font-weight:700; color:<%= t[:acento] %>;"><%= desviacion(@alerta) %></div>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Barra de rango -->
+                <tr>
+                  <td class="px" style="padding:16px 32px 4px 32px; font-family:<%= fuente %>;">
+                    <div class="text-mute" style="font-size:12px; font-weight:600; letter-spacing:0.8px; text-transform:uppercase; color:#8c7354; padding-bottom:8px;">Rango permitido</div>
+                    <% zonas = zonas_rango(@alerta, t) %>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <% zonas.each_with_index do |z, i| %>
+                          <% radio = if zonas.size == 1 then "5px" elsif i.zero? then "5px 0 0 5px" elsif i == zonas.size - 1 then "0 5px 5px 0" else "0" end %>
+                          <td width="<%= z[:ancho] %>%" height="10" style="height:10px; background-color:<%= z[:color] %>; border-radius:<%= radio %>; font-size:0; line-height:0;">&nbsp;</td>
+                        <% end %>
+                      </tr>
+                      <tr>
+                        <% zonas.each do |z| %>
+                          <% alineacion = { bajo: "left", permitido: "center", alto: "right" }[z[:lado]] %>
+                          <% if z[:lado] == :permitido %>
+                            <td width="<%= z[:ancho] %>%" align="center" class="text-sub" style="padding-top:6px; font-size:12px; color:#254f22; font-weight:600;"><%= z[:etiqueta] %></td>
+                          <% elsif z[:activa] %>
+                            <td width="<%= z[:ancho] %>%" align="<%= alineacion %>" class="sev-text" style="padding-top:6px; font-size:12px; font-weight:700; color:<%= t[:acento] %>;"><%= z[:etiqueta] %></td>
+                          <% else %>
+                            <td width="<%= z[:ancho] %>%" align="<%= alineacion %>" class="text-mute" style="padding-top:6px; font-size:11px; color:#8c7354;"><%= z[:etiqueta] %></td>
+                          <% end %>
+                        <% end %>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Detalle -->
+                <% filas = [
+                     [ "Finca", @finca.nombre ],
+                     [ "Cultivo", @cultivo&.nombre || "Sin cultivo" ],
+                     [ "Sensor", "#{@sensor.codigo} · #{@sensor.nombre}" ],
+                     [ "Evento", @evento.nombre ],
+                     [ "Fecha y hora", fecha_hora_larga(@lectura) ]
+                   ] %>
+                <tr>
+                  <td class="px" style="padding:24px 32px 8px 32px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="bg-soft border" style="background-color:#f8f3ee; border:1px solid #ede0d0; border-radius:12px;">
+                      <tr>
+                        <td style="padding:6px 20px; font-family:<%= fuente %>; font-size:14px;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                            <% filas.each_with_index do |(etiqueta, dato), i| %>
+                              <% borde = i < filas.size - 1 ? "border-bottom:1px solid #ede0d0;" : "" %>
+                              <tr>
+                                <td class="text-mute border" style="padding:10px 0; color:#8c7354; <%= borde %>"><%= etiqueta %></td>
+                                <td class="text-main border" align="right" style="padding:10px 0; color:#1a3a18; font-weight:600; <%= borde %>"><%= dato %></td>
+                              </tr>
+                            <% end %>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Botón -->
+                <tr>
+                  <td class="px" align="center" style="padding:24px 32px 8px 32px;">
+                    <!--[if mso]>
+                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="<%= @url_lecturas %>" style="height:46px; v-text-anchor:middle; width:260px;" arcsize="22%" stroke="f" fillcolor="#2E632B">
+                      <w:anchorlock/>
+                      <center style="color:#ffffff; font-family:Segoe UI, Arial, sans-serif; font-size:15px; font-weight:bold;">Ver lecturas del sensor</center>
+                    </v:roundrect>
+                    <![endif]-->
+                    <!--[if !mso]><!-->
+                    <a href="<%= @url_lecturas %>"
+                       style="display:inline-block; background-color:#2E632B; color:#ffffff; font-family:<%= fuente %>; font-size:15px; font-weight:700; line-height:46px; padding:0 28px; border-radius:10px;">
+                      Ver lecturas del sensor &nbsp;&#8594;
+                    </a>
+                    <!--<![endif]-->
+                  </td>
+                </tr>
+
+                <!-- Nota anti-spam -->
+                <tr>
+                  <td class="px" style="padding:16px 32px 28px 32px; font-family:<%= fuente %>;">
+                    <p class="text-mute" style="margin:0; font-size:13px; line-height:1.6; color:#8c7354; text-align:center;">
+                      Para evitar correos repetidos, no recibirás otro aviso de este evento para este sensor durante los próximos <strong><%= @evento.intervalo_minutos %> minutos</strong>. Las lecturas siguientes quedan registradas en la pestaña <em>Alertas</em>.
+                    </p>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+
+          <!-- Pie -->
+          <tr>
+            <td class="px" style="padding:20px 32px 0 32px; font-family:<%= fuente %>;">
+              <p class="text-mute" style="margin:0 0 6px 0; font-size:12px; line-height:1.6; color:#8c7354; text-align:center;">
+                Recibes este correo porque estás en la lista de avisos del evento <strong><%= @evento.nombre %></strong> de la variable <strong><%= @variable.nombre %></strong>.
+                Para dejar de recibirlo, pide a un administrador que te quite de la lista en <em>Variables → <%= @variable.nombre %> → Eventos</em>.
+              </p>
+              <p class="text-mute" style="margin:0; font-size:12px; color:#b5966d; text-align:center;">
+                Yuca · Monitoreo agrícola &nbsp;·&nbsp; Correo automático, no respondas a este mensaje.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

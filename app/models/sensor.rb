@@ -6,6 +6,7 @@ class Sensor < ApplicationRecord
   has_many :sensor_variables, dependent: :destroy
   has_many :variables, through: :sensor_variables
   has_many :lecturas, dependent: :destroy
+  has_many :alertas, dependent: :delete_all
 
   validates :codigo, presence: true, length: { maximum: 100 },
             uniqueness: { scope: :finca_id, case_sensitive: false }

@@ -9,7 +9,7 @@ module Api
 
       # GET /api/v1/variables
       def index
-        variables = Variable.order(:nombre)
+        variables = Variable.includes(:eventos).order(:nombre)
         render json: variables.map { |v| serialize_variable(v) }
       end
 
@@ -31,7 +31,7 @@ module Api
       # PATCH /api/v1/variables/:id
       def update
         if @variable.update(variable_params)
-          render json: serialize_variable(@variable)
+          render json: serialize_variable(@variable.reload)
         else
           render json: { errors: @variable.errors }, status: :unprocessable_entity
         end
@@ -46,13 +46,20 @@ module Api
       private
 
       def set_variable
-        @variable = Variable.find(params[:id])
+        @variable = Variable.includes(:eventos).find(params[:id])
       rescue ActiveRecord::RecordNotFound
         render json: { error: "Variable no encontrada" }, status: :not_found
       end
 
       def variable_params
-        params.require(:variable).permit(:nombre, :unidad, :decimales, :descripcion)
+        params.require(:variable).permit(
+          :nombre, :unidad, :decimales, :descripcion,
+          eventos_attributes: [
+            :id, :nombre, :severidad, :rango_min, :rango_max,
+            :notificar_email, :intervalo_minutos, :activo, :_destroy,
+            { emails: [] }
+          ]
+        )
       end
 
       def serialize_variable(variable)
@@ -62,8 +69,24 @@ module Api
           unidad:      variable.unidad,
           decimales:   variable.decimales,
           descripcion: variable.descripcion,
+          eventos:     variable.eventos.map { |e| serialize_evento(e) },
           createdAt:   variable.created_at.iso8601,
           updatedAt:   variable.updated_at.iso8601
+        }
+      end
+
+      def serialize_evento(evento)
+        {
+          id:        evento.id.to_s,
+          nombre:    evento.nombre,
+          severidad: evento.severidad,
+          rango:     { min: evento.rango_min&.to_f, max: evento.rango_max&.to_f },
+          notificaciones: {
+            email:            evento.notificar_email,
+            emails:           evento.emails,
+            intervaloMinutos: evento.intervalo_minutos
+          },
+          activo:    evento.activo
         }
       end
     end

@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_28_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_28_130001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "alertas", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "email_enviado_at"
+    t.string "emails_enviados", default: [], null: false, array: true
+    t.text "error_envio"
+    t.bigint "finca_id", null: false
+    t.bigint "lectura_id", null: false
+    t.string "motivo_omision"
+    t.boolean "notificacion_omitida", default: false, null: false
+    t.decimal "rango_max", precision: 8, scale: 2
+    t.decimal "rango_min", precision: 8, scale: 2
+    t.bigint "sensor_id", null: false
+    t.string "severidad", null: false
+    t.string "tipo", null: false
+    t.datetime "updated_at", null: false
+    t.decimal "valor", precision: 8, scale: 2, null: false
+    t.bigint "variable_evento_id", null: false
+    t.bigint "variable_id", null: false
+    t.index ["finca_id", "created_at"], name: "index_alertas_on_finca_id_and_created_at"
+    t.index ["finca_id"], name: "index_alertas_on_finca_id"
+    t.index ["lectura_id", "variable_evento_id"], name: "index_alertas_on_lectura_id_and_variable_evento_id", unique: true
+    t.index ["lectura_id"], name: "index_alertas_on_lectura_id"
+    t.index ["sensor_id", "variable_evento_id", "created_at"], name: "idx_on_sensor_id_variable_evento_id_created_at_8b5eea6245"
+    t.index ["sensor_id"], name: "index_alertas_on_sensor_id"
+    t.index ["variable_evento_id"], name: "index_alertas_on_variable_evento_id"
+    t.index ["variable_id"], name: "index_alertas_on_variable_id"
+  end
 
   create_table "cultivos", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -163,6 +191,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_28_120000) do
     t.index ["rol_id"], name: "index_users_on_rol_id"
   end
 
+  create_table "variable_eventos", force: :cascade do |t|
+    t.boolean "activo", default: true, null: false
+    t.datetime "created_at", null: false
+    t.string "emails", default: [], null: false, array: true
+    t.integer "intervalo_minutos", default: 60, null: false
+    t.string "nombre", null: false
+    t.boolean "notificar_email", default: true, null: false
+    t.decimal "rango_max", precision: 8, scale: 2
+    t.decimal "rango_min", precision: 8, scale: 2
+    t.string "severidad", default: "alerta", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "variable_id", null: false
+    t.index ["variable_id", "nombre"], name: "index_variable_eventos_on_variable_id_and_nombre", unique: true
+    t.index ["variable_id"], name: "index_variable_eventos_on_variable_id"
+  end
+
   create_table "variables", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "decimales", default: 2, null: false
@@ -173,6 +217,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_28_120000) do
     t.index ["nombre"], name: "index_variables_on_nombre", unique: true
   end
 
+  add_foreign_key "alertas", "fincas"
+  add_foreign_key "alertas", "lecturas"
+  add_foreign_key "alertas", "sensores"
+  add_foreign_key "alertas", "variable_eventos"
+  add_foreign_key "alertas", "variables"
   add_foreign_key "cultivos", "fincas"
   add_foreign_key "fincas", "users"
   add_foreign_key "iot_credentials", "fincas"
@@ -185,4 +234,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_28_120000) do
   add_foreign_key "sensores", "cultivos"
   add_foreign_key "sensores", "fincas"
   add_foreign_key "users", "roles", column: "rol_id"
+  add_foreign_key "variable_eventos", "variables"
 end

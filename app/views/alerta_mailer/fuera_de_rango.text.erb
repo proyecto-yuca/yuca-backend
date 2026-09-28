@@ -1,0 +1,23 @@
+<% t = severidad_tokens(@alerta.severidad) -%>
+YUCA · MONITOREO AGRÍCOLA
+[<%= t[:etiqueta] %>] <%= @evento.nombre %>
+
+El sensor <%= @sensor.codigo %> registró una lectura <%= descripcion_tipo(@alerta) %> permitido en <%= @finca.nombre %>.
+
+  <%= @variable.nombre %> registrada: <%= valor_con_unidad(@alerta.valor, @variable) %> (<%= desviacion(@alerta) %>)
+  Rango permitido:   <%= rango_texto(@alerta) %>
+
+  Finca:        <%= @finca.nombre %>
+  Cultivo:      <%= @cultivo&.nombre || "Sin cultivo" %>
+  Sensor:       <%= @sensor.codigo %> · <%= @sensor.nombre %>
+  Evento:       <%= @evento.nombre %>
+  Fecha y hora: <%= fecha_hora_larga(@lectura) %>
+
+Ver lecturas del sensor:
+<%= @url_lecturas %>
+
+Para evitar correos repetidos, no recibirás otro aviso de este evento para este sensor durante los próximos <%= @evento.intervalo_minutos %> minutos.
+
+--
+Recibes este correo porque estás en la lista de avisos del evento "<%= @evento.nombre %>" de la variable <%= @variable.nombre %>.
+Correo automático, no respondas a este mensaje.

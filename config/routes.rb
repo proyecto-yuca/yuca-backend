@@ -51,6 +51,8 @@ Rails.application.routes.draw do
           resources :lecturas, only: %i[index create]
         end
 
+        resources :alertas, only: %i[index]
+
         namespace :iot do
           resource :credential, only: :create, controller: "credentials"
         end
@@ -61,6 +63,8 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

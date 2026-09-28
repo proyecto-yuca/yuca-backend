@@ -125,4 +125,38 @@ sensores.each do |sensor|
 end
 
 puts "   ✓ #{cultivos.size} cultivos, #{sensores.size} sensores, #{total_lecturas} lecturas creadas para #{finca.nombre}"
+
+# ─── Eventos de tolerancia ────────────────────────────────────────────────────
+# Se crean después de las lecturas demo para no disparar cientos de alertas y correos.
+
+eventos_data = {
+  humedad => [
+    { nombre: "Humedad fuera de óptimo", severidad: "alerta",  rango_min: 40, rango_max: 80 },
+    { nombre: "Humedad crítica",         severidad: "critico", rango_min: 30, rango_max: 90 }
+  ],
+  temperatura => [
+    { nombre: "Temperatura fuera de óptimo", severidad: "alerta",  rango_min: 10, rango_max: 33 },
+    { nombre: "Temperatura crítica",         severidad: "critico", rango_min: 5,  rango_max: 38 }
+  ],
+  luminosidad => [
+    { nombre: "Luminosidad excesiva", severidad: "alerta", rango_min: nil, rango_max: 100_000 }
+  ]
+}
+
+total_eventos = 0
+eventos_data.each do |variable, eventos|
+  eventos.each do |attrs|
+    variable.eventos.find_or_create_by!(nombre: attrs[:nombre]) do |e|
+      e.severidad         = attrs[:severidad]
+      e.rango_min         = attrs[:rango_min]
+      e.rango_max         = attrs[:rango_max]
+      e.notificar_email   = true
+      e.emails            = [ "alertas@yuca.com" ]
+      e.intervalo_minutos = 60
+    end
+    total_eventos += 1
+  end
+end
+
+puts "   ✓ #{total_eventos} eventos de tolerancia (correo a alertas@yuca.com)"
 puts ""
